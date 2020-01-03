@@ -52,7 +52,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableArray;
-
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 
 /**
@@ -72,6 +72,10 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
     String name;
     boolean advertising;
     private Context context;
+
+    private DeviceEventManagerModule.RCTDeviceEventEmitter getEventEmitter() {
+        return this.getReactApplicationContext().getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
+    }
 
     public RNBLEModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -159,6 +163,7 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
             if (responseNeeded) {
                 mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value);
             }
+            getEventEmitter().emit("onWrite", new String(value));
         }
     };
 
